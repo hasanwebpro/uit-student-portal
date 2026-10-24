@@ -1,0 +1,120 @@
+@startuml
+!pragma layout smetana
+title UIT Student Portal — core data model (MySQL)
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+
+entity "programs" as programs {
+  * id : INT <<PK>>
+  --
+  code, name, degree_years
+}
+entity "curriculum" as curriculum {
+  * program_id : INT <<PK,FK>>
+  * course_id : INT <<PK,FK>>
+  --
+  semester_no, requirement
+}
+entity "courses" as courses {
+  * id : INT <<PK>>
+  --
+  code, title, credit_hrs, kind, category, prereq_code
+}
+entity "academic_sessions" as sessions {
+  * id : INT <<PK>>
+  --
+  name, start_date, end_date, is_current
+}
+entity "faculty" as faculty {
+  * id : INT <<PK>>
+  --
+  code, name
+}
+entity "sections" as sections {
+  * id : INT <<PK>>
+  --
+  course_id <<FK>>, session_id <<FK>>, faculty_id <<FK>>
+  code, scheduled
+}
+entity "timetable_slots" as slots {
+  * id : INT <<PK>>
+  --
+  section_id <<FK>>, day, start_time, end_time, room
+}
+entity "students" as students {
+  * id : INT <<PK>>
+  --
+  reg_no <<UQ>>, password_hash, full_name
+  program_id <<FK>>, failed_logins, locked_until
+}
+entity "student_profiles" as profiles {
+  * student_id : INT <<PK,FK>>
+  --
+  tax_*, guardian_*, addresses, contact, avatar
+}
+entity "enrollments" as enrollments {
+  * id : INT <<PK>>
+  --
+  student_id <<FK>>, section_id <<FK>>, course_id, session_id
+  status, grade, grade_pts
+}
+entity "attendance_records" as attendance {
+  * id : INT <<PK>>
+  --
+  enrollment_id <<FK>>, held_on, topic, present
+}
+entity "plo_scores" as plo {
+  * enrollment_id <<PK,FK>>
+  * so_no <<PK>>
+  --
+  percent, weight
+}
+entity "assessments" as assessments {
+  * id : INT <<PK>>
+  --
+  section_id <<FK>>, kind, name, total, passing
+}
+entity "assessment_marks" as marks {
+  * assessment_id <<PK,FK>>
+  * student_id <<PK,FK>>
+  --
+  obtained
+}
+entity "ledger_entries" as ledger {
+  * id : INT <<PK>>
+  --
+  student_id <<FK>>, session_id <<FK>>, posted_on
+  fee_nature, debit, credit
+}
+entity "messages" as messages {
+  * id : INT <<PK>>
+  --
+  owner_id <<FK>>, box, subject, body
+  comm_type, priority, category, follow_up
+}
+entity "auth_sessions" as auth {
+  * token_hash : CHAR(64) <<PK>>
+  --
+  student_id <<FK>>, expires_at
+}
+
+programs ||--o{ students
+programs ||--o{ curriculum
+courses ||--o{ curriculum
+courses ||--o{ sections
+sessions ||--o{ sections
+faculty |o--o{ sections
+sections ||--o{ slots
+students ||--|| profiles
+students ||--o{ enrollments
+sections ||--o{ enrollments
+enrollments ||--o{ attendance
+enrollments ||--o{ plo
+sections ||--o{ assessments
+assessments ||--o{ marks
+students ||--o{ marks
+students ||--o{ ledger
+students ||--o{ messages
+students ||--o{ auth
+@enduml

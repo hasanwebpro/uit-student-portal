@@ -1,0 +1,47 @@
+@startuml
+left to right direction
+title Student portal — use cases
+skinparam shadowing false
+skinparam actorStyle awesome
+
+actor Student
+actor "Faculty / Staff" as Staff <<recipient>>
+
+rectangle "UIT Student Portal" {
+  usecase "Sign in / out\n(remember me)" as UC1
+  usecase "View dashboard\n(stats, courses, GPA, ledger)" as UC2
+  usecase "Track attendance" as UC3
+  usecase "View timetable" as UC4
+  usecase "See assessment results" as UC5
+  usecase "See seating plan,\nadmit card, transcript" as UC6
+  usecase "Check fees & receipts" as UC7
+  usecase "Manage to-do list" as UC8
+  usecase "Read / send messages" as UC9
+  usecase "Check degree road map\n& verify it" as UC10
+  usecase "Register for next term" as UC11
+  usecase "Edit profile & picture" as UC12
+  usecase "Raise work-flow requests" as UC13
+  usecase "Give course feedback" as UC14
+  usecase "Change password" as UC15
+  usecase "Switch to Sunlight mode" as UC16
+}
+
+Student --> UC1
+Student --> UC2
+Student --> UC3
+Student --> UC4
+Student --> UC5
+Student --> UC6
+Student --> UC7
+Student --> UC8
+Student --> UC9
+Student --> UC10
+Student --> UC11
+Student --> UC12
+Student --> UC13
+Student --> UC14
+Student --> UC15
+Student --> UC16
+UC9 --> Staff : sends to
+UC11 ..> UC10 : needs passed\nprerequisites
+@enduml

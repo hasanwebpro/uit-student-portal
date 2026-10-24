@@ -1,0 +1,36 @@
+@startuml
+title Online course registration — rules enforced on the server
+skinparam shadowing false
+autonumber
+
+actor Student
+participant "Registration view" as V
+participant "registration.controller" as C
+participant "services/registration" as S
+database MySQL as DB
+
+Student -> V : tick courses, press "Save registration"
+V -> C : POST /api/registration { sectionIds }
+C -> C : zod: ≤ 12 positive integers
+C -> S : register(student, sectionIds)
+S -> DB : registration window for the program
+alt window closed
+  S --> C : 409 "not open right now"
+else open
+  S -> DB : offered sections (+ slots) · my passed courses
+  loop each chosen section
+    S -> S : offered this term?\nalready passed?\nprerequisite passed?
+  end
+  S -> S : pairwise timetable clash check
+  S -> S : total credits within min–max?
+  alt any problem
+    S --> C : 422 { problems: [ … ] }
+    C --> V : list shown in an alert
+  else valid
+    S -> DB : BEGIN\nDELETE my PENDING enrolments for the term\nINSERT new PENDING enrolments\nCOMMIT
+    S -> DB : INSERT activity_log
+    S --> C : ok { credits, courses }
+    C --> V : toast "Registration saved"
+  end
+end
+@enduml

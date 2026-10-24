@@ -1,0 +1,47 @@
+{
+  "name": "uit-student-portal",
+  "version": "1.0.0",
+  "description": "Student portal for UIT University: a MySQL + Express + React + Node.js (MVC) rebuild with a faithful Classic look and an accessible Sunlight theme.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "launch": "node tools/launch.mjs",
+    "dev": "node --watch server/index.js",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "seed": "node server/seed/index.js",
+    "test": "node --test \"test/*.test.js\"",
+    "audit:contrast": "node tools/audit/contrast.mjs",
+    "audit:mock": "node tools/audit/mock-server.mjs",
+    "audit:ui": "node tools/audit/ui-audit.mjs",
+    "schema": "node tools/generate-schema.mjs > docs/schema.sql",
+    "test:integration": "node tools/test-integration.mjs",
+    "audit:deps": "npm audit --omit=dev --audit-level=high",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "compression": "^1.8.2",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jose": "6.2.13",
+    "mysql2": "^3.24.6",
+    "pino": "10.4.0",
+    "pino-http": "11.0.0",
+    "sequelize": "^6.37.8",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "axe-core": "^4.14.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0"
+  }
+}

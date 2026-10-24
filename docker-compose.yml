@@ -1,0 +1,35 @@
+# docker compose up --build        → http://localhost:3000
+# Put JWT_SECRET and MYSQL_PASSWORD in a .env file next to this one (compose reads it automatically).
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env}
+      MYSQL_DATABASE: uit_portal
+    volumes: [dbdata:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${MYSQL_PASSWORD}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["3000:3000"]
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: uit_portal
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env (openssl rand -base64 48)}
+      SEED_DEMO: ${SEED_DEMO:-true}          # fictional demo data on first start; set false for real data
+      COOKIE_SECURE: ${COOKIE_SECURE:-false} # plain http on localhost/LAN; put TLS in front and set true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+volumes:
+  dbdata:

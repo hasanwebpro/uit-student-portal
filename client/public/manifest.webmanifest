@@ -1,0 +1,11 @@
+{
+  "name": "UIT Student Portal",
+  "short_name": "UIT Portal",
+  "description": "Courses, attendance, timetable, exams and fees for UIT University students.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f6fa",
+  "theme_color": "#0a3f9e",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

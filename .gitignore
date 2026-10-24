@@ -1,0 +1,12 @@
+node_modules/
+client/dist/
+.env
+*.log
+.DS_Store
+
+# Raw capture of the live portal made with a student's own login. It contains real personal data
+# (name, CNIC, guardian details, grades) — never commit or publish it.
+recon/
+audit-out/
+uit-portal-source.zip
+.launcher-state.json

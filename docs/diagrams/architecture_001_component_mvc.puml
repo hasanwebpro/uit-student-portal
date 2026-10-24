@@ -1,0 +1,62 @@
+@startuml
+!pragma layout smetana
+title UIT Student Portal — MVC architecture (React · Express · MySQL)
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Poppins
+skinparam packageStyle rectangle
+
+package "Browser — React (client/src)" as FE {
+  package "View  (views/)" as V {
+    [pages/ (Dashboard, Attendance, …)] as Pages
+    [ui/ (Fields, DataTable, Dialog, Charts)] as UI
+    [layout/ (AppShell, Sidebar, UserPanel)] as Layout
+  }
+  package "Controller  (controllers/)" as C {
+    [AuthContext · useQuery · useMutation] as Hooks
+    [useTheme · ToastContext] as Hooks2
+  }
+  package "Model  (models/)" as M {
+    [portal.js — one object per resource] as Res
+    [api.js — fetch wrapper (CSRF header)] as Api
+    [format.js · navigation.js] as Fmt
+  }
+}
+
+package "Server — Express (server/)" as BE {
+  package "Routes  (routes/)" as R {
+    [URL → controller tables] as Routes
+  }
+  package "Controller  (controllers/)" as SC {
+    [validate input (zod) · shape response] as Ctrl
+  }
+  package "Model  (models/ + services/)" as SM {
+    [Sequelize models + associations] as Models
+    [services/: GPA, attendance, registration rules, ledger] as Svc
+  }
+  package "Middleware" as MW {
+    [helmet CSP · rate-limit · session · CSRF header] as Mid
+  }
+}
+
+database "MySQL" as DB
+
+Pages --> Hooks : useQuery / useMutation
+Pages --> UI
+Layout --> Hooks2
+Hooks --> Res
+Res --> Api
+Api --> Mid : "HTTPS /api/*  (JSON, httpOnly cookie)"
+Mid --> Routes
+Routes --> Ctrl
+Ctrl --> Svc
+Ctrl --> Models
+Svc --> Models
+Models --> DB : mysql2
+
+note right of Ctrl
+  Only layer that touches req/res.
+  Business rules live in services,
+  never in routes or views.
+end note
+@enduml

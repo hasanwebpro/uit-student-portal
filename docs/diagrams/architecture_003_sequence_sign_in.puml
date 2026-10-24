@@ -1,0 +1,53 @@
+@startuml
+title Sign-in, lockout, JWT access token and rotating refresh token
+skinparam shadowing false
+autonumber
+
+actor Student
+participant "React app\n(api.js)" as A
+participant "Express\nrate-limit · CSRF · sessionLoader" as MW
+participant "auth.controller" as AC
+participant "services/auth\n(credentials)" as S
+participant "services/session\n(token lifecycle)" as SS
+database MySQL as DB
+
+== Sign in ==
+Student -> A : reg no, password, "Remember me"
+A -> MW : POST /api/auth/login  (X-Requested-With: uit-portal)
+MW -> MW : 30 / 15 min per IP and 10 / 15 min per IP+account\nreject if CSRF header missing or Origin is foreign
+MW -> AC : validated JSON (zod)
+AC -> S : authenticate(credentials)
+S -> DB : find student by reg_no
+alt account locked
+  S --> AC : 423 locked for 15 min
+else wrong password / unknown reg no
+  S -> S : scrypt verify against a dummy hash\n(same cost, no user enumeration)
+  S -> DB : failed_logins + 1 (lock at 5)
+  S --> AC : 401 incorrect
+else success
+  S -> DB : reset counters, INSERT activity "Student Logged In"
+  AC -> SS : openSession(student, remember)
+  SS -> DB : INSERT auth_session (sha256(refresh token), expires 8 h / 30 d)
+  AC --> A : 200 {student}\nSet-Cookie uit_at = JWT 15 min (httpOnly, Strict, path /api)\nSet-Cookie uit_rt = refresh (httpOnly, Strict, path /api/auth)
+end
+
+== Every request ==
+A -> MW : GET /api/...  (cookie uit_at)
+MW -> MW : verify JWT (HS256, iss, aud, exp) — no DB call
+MW -> SS : isSessionActive(sid)  (30 s cache, DB on miss)
+MW --> A : 200 data   /   401 if expired or revoked
+
+== Silent refresh (access token expired) ==
+A -> MW : 401 received
+A -> AC : POST /api/auth/refresh  (cookie uit_rt) — one request shared by all callers
+AC -> SS : refreshSession(token)
+alt token is the current one
+  SS -> DB : compare-and-set: new hash, remember previous hash
+  AC --> A : new uit_at + rotated uit_rt, original call replayed
+else previous token within 10 s (two tabs racing)
+  AC --> A : new uit_at only
+else previous token after 10 s  = replay / theft
+  SS -> DB : revoke whole session + audit "reuse detected"
+  AC --> A : 401, cookies cleared → sign-in screen
+end
+@enduml

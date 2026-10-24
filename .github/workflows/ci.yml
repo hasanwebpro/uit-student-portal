@@ -1,0 +1,63 @@
+name: CI
+on:
+  push: { branches: [main, master] }
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Unit tests, build, audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: "package-lock.json\nclient/package-lock.json" }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run schema > /dev/null          # models still generate valid DDL
+      - run: npm ci --prefix client && npm run build --prefix client
+      - name: Dependency audit (production deps, high+)
+        run: npm audit --omit=dev --audit-level=high
+
+  integration:
+    name: API tests on real MySQL
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci-password
+          MYSQL_DATABASE: uit_portal_test
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pci-password"
+          --health-interval=5s --health-timeout=3s --health-retries=30
+    env:
+      MYSQL_HOST: 127.0.0.1
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ci-password
+      MYSQL_DATABASE: uit_portal_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run test:integration
+      - name: Boots against MySQL, seeds, serves /readyz
+        run: |
+          NODE_ENV=development JWT_SECRET=$(openssl rand -base64 48) PORT=3100 node server/index.js &
+          for i in $(seq 1 40); do curl -fs http://127.0.0.1:3100/readyz && break || sleep 1; done
+          curl -fs http://127.0.0.1:3100/readyz
+          kill %1
+
+  docker:
+    name: Docker image builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t uit-portal .

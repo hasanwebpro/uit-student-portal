@@ -1,0 +1,154 @@
+/*
+ * Design tokens.
+ *
+ *  :root                      → "Classic": values measured from the live UIT portal (Metronic-based), so the clone matches it.
+ *  [data-theme="sunlight"]    → the accessibility enhancement: dark ink, AAA contrast, heavier borders, larger type.
+ *  [data-contrast="high"]     → sunlight + pure black/white (also automatic with prefers-contrast: more).
+ *
+ * Every component reads these tokens; nothing below this file hard-codes a colour or size that differs between themes.
+ */
+:root {
+  --font: "Poppins", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-base: 13px;          /* original root size */
+  --fs-lg: 14px;
+  --fs-xl: 16.575px;        /* card titles */
+  --fs-2xl: 19px;
+  --fs-3xl: 26px;
+  --lh: 1.5;
+  --fw-body: 400;
+  --fw-strong: 600;
+
+  --bg: #eef0f8;
+  --surface: #ffffff;
+  --surface-2: #f3f6f9;
+  --zebra: #f2f2f2;
+  --ink: #3f4254;
+  --ink-2: #3f4254;
+  --ink-strong: #181c32;
+  --muted: #b5b5c3;
+  --gray: #7e8299;
+  --cell: #808080;          /* table body text in the original grids */
+  --line: #ebedf3;
+  --control-line: #e4e6ef;
+
+  --primary: #3699ff;
+  --primary-hover: #187de4;
+  --on-primary: #ffffff;
+  --primary-soft: #e1f0ff;
+  --primary-ink: #3699ff;
+
+  --accent: #ffa800;
+  --on-accent: #ffffff;
+  --accent-soft: #fff4de;
+  --accent-ink: #ffa800;
+
+  --ok: #1bc5bd;
+  --ok-soft: #c9f7f5;
+  --bad: #f64e60;
+  --bad-soft: #ffe2e5;
+  --info: #8950fc;
+  --info-soft: #eee5ff;
+  --focus: #3699ff;
+
+  --radius: 5.46px;
+  --radius-sm: 5.46px;
+  --radius-tile: 16.25px;
+  --bw: 1px;
+  --card-border: 0 solid transparent;
+  --card-shadow: 0 0 30px 0 rgb(82 63 105 / 0.05);
+  --nav-shadow: 0 0 28px 0 rgb(82 63 105 / 0.08);
+  --tap: 35px;
+
+  --sidebar-w: 265px;
+  --sidebar-w-min: 70px;
+  --topbar-h: 65px;
+  --subheader-h: 54px;
+  --footer-h: 60px;
+  --bottomnav-h: 0px;
+  --gutter: 25px;
+  --content-max: none;
+
+  /* component tokens */
+  --card-pad: 26px 29.25px;
+  --tile-border: 0 solid transparent;
+  --th-bg: var(--primary);
+  --th-ink: #ffffff;
+  --th-pad: 18px 7px 16px;
+  --td-pad: 5.2px 7px;
+  --btn-pad: 8px 16px;
+  --btn-sm-pad: 8.45px 13px;
+  --btn-sm-fs: 12.025px;
+  --btn-sm-fw: 600;
+  --btn-fw: 500;
+  --btn-border: 0 solid transparent;
+  --input-border: 1px solid var(--control-line);
+  --input-left: 3px solid var(--primary);
+  --input-pad: 3.9px 13px;
+  --label-fw: 500;
+}
+
+/* ───────── Sunlight: readable outdoors. Every text pair is verified by tools/audit/contrast.mjs ───────── */
+:root[data-theme="sunlight"] {
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --fs-xs: 13px; --fs-sm: 15px; --fs-base: 17px; --fs-lg: 19px; --fs-xl: 24px; --fs-2xl: 30px; --fs-3xl: 38px;
+  --lh: 1.55; --fw-body: 500; --fw-strong: 750;
+
+  --bg: #f2f5fa; --surface: #ffffff; --surface-2: #e9eff8; --zebra: #e9eff8;
+  --ink: #0b1b33; --ink-2: #2b3a54; --ink-strong: #0b1b33; --muted: #3d4d68; --gray: #3d4d68; --cell: #0b1b33;
+  --line: #b8c3d6; --control-line: #55657e;
+
+  --primary: #0a3f9e; --primary-hover: #072f7a; --on-primary: #ffffff; --primary-soft: #dfe9fb; --primary-ink: #0a3f9e;
+  --accent: #ffb400; --on-accent: #0b1b33; --accent-soft: #ffe9a6; --accent-ink: #7a4300;
+  --ok: #095e2e; --ok-soft: #d9f2e1; --bad: #a50f1a; --bad-soft: #fde1e3; --info: #5b2db7; --info-soft: #ece4fb;
+  --focus: #0a3f9e;
+
+  --radius: 14px; --radius-sm: 10px; --radius-tile: 14px; --bw: 2px;
+  --card-border: 2px solid var(--line);
+  --card-shadow: 0 1px 2px rgb(11 27 51 / 0.08), 0 4px 14px rgb(11 27 51 / 0.06);
+  --nav-shadow: none;
+  --tap: 44px;
+  --sidebar-w: 280px; --topbar-h: 64px; --bottomnav-h: 68px; --gutter: 16px;
+  --content-max: 1240px;
+
+  --card-pad: 18px;
+  --tile-border: 2px solid var(--ink);
+  --th-bg: var(--primary);
+  --th-ink: #ffffff;
+  --th-pad: 12px 14px;
+  --td-pad: 12px 14px;
+  --btn-pad: 10px 20px;
+  --btn-sm-pad: 6px 14px;
+  --btn-sm-fs: 15px;
+  --btn-sm-fw: 750;
+  --btn-fw: 750;
+  --btn-border: 2px solid transparent;
+  --input-border: 2px solid var(--control-line);
+  --input-left: 2px solid var(--control-line);
+  --input-pad: 10px 14px;
+  --label-fw: 750;
+}
+@media (min-width: 640px) { :root[data-theme="sunlight"] { --gutter: 24px; } }
+@media (min-width: 1100px) { :root[data-theme="sunlight"] { --gutter: 32px; } }
+
+:root[data-theme="sunlight"][data-contrast="high"] {
+  --bg: #ffffff; --surface-2: #f0f0f0; --zebra: #f0f0f0;
+  --ink: #000000; --ink-2: #000000; --ink-strong: #000000; --muted: #1a1a1a; --gray: #1a1a1a; --cell: #000000;
+  --line: #000000; --control-line: #000000;
+  --primary: #002a80; --primary-hover: #001a55; --primary-soft: #e6edff; --primary-ink: #002a80;
+  --accent-ink: #5a3000; --ok: #00501f; --bad: #8f0010; --focus: #000000;
+  --bw: 3px; --card-shadow: none;
+}
+@media (prefers-contrast: more) {
+  :root[data-theme="sunlight"]:not([data-contrast="normal"]) {
+    --bg: #ffffff; --surface-2: #f0f0f0; --zebra: #f0f0f0;
+    --ink: #000000; --ink-2: #000000; --ink-strong: #000000; --muted: #1a1a1a; --gray: #1a1a1a; --cell: #000000;
+    --line: #000000; --control-line: #000000;
+    --primary: #002a80; --primary-hover: #001a55; --primary-soft: #e6edff; --primary-ink: #002a80;
+    --accent-ink: #5a3000; --ok: #00501f; --bad: #8f0010; --focus: #000000;
+    --bw: 3px; --card-shadow: none;
+  }
+}
