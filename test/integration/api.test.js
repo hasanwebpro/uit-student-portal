@@ -120,7 +120,7 @@ suite('every read endpoint answers 200 with JSON for a signed-in student', async
   const programId = (programs.programs ?? programs)[0]?.id;
   const paths = ['/api/dashboard', '/api/courses', '/api/attendance', '/api/timetable', '/api/assessments/filters', '/api/assessments', '/api/roadmap',
     '/api/transcript/programs', `/api/transcript?program=${programId}`, '/api/plo', '/api/exams/seating', '/api/exams/online', '/api/exams/admit-card?kind=FINAL',
-    '/api/fees/ledger', '/api/fees/advance', '/api/todos', '/api/messages', '/api/messages/recipients', '/api/workflows', '/api/announcements', '/api/surveys',
+    '/api/fees/ledger', '/api/fees/advance', '/api/todos', '/api/messages', '/api/messages/recipients?type=student', '/api/workflows', '/api/announcements', '/api/surveys',
     '/api/activity', '/api/registration', '/api/profile'];
   for (const p of paths) {
     const r = await b.get(p);
@@ -148,7 +148,7 @@ suite('to-do CRUD, validation, and student isolation (other students get 404)', 
 suite('cache: a write is visible on the very next read (invalidation works)', async () => {
   const b = new Browser(); await b.login();
   const before = (await b.get('/api/todos')).json;
-  const list = (j) => j.todos ?? j.items ?? j;
+  const list = (j) => j.rows;
   await b.get('/api/dashboard'); await b.get('/api/dashboard');          // warm the cache
   const made = await b.post('/api/todos', { task: 'cache probe' });
   assert.equal(made.status, 201);

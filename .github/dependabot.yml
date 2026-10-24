@@ -16,3 +16,7 @@ updates:
   - package-ecosystem: docker
     directory: /
     schedule: { interval: monthly }
+    ignore:
+      # stay on an even-numbered (LTS) Node line; odd releases are short-lived
+      - dependency-name: node
+        update-types: [version-update:semver-major]

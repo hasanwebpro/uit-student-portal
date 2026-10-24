@@ -5,6 +5,7 @@
  */
 import { SignJWT, jwtVerify } from 'jose';
 import { config } from '../config.js';
+import { uuid } from './crypto.js';
 
 const key = new TextEncoder().encode(config.jwt.secret);
 const ALG = 'HS256';
@@ -17,6 +18,7 @@ export function signAccessToken(claims, ttlSeconds = config.accessTokenSeconds) 
     .setSubject(String(claims.sub))
     .setIssuer(base.issuer)
     .setAudience(base.audience)
+    .setJti(uuid())                      // every token is unique, even two issued in the same second
     .setIssuedAt()
     .setExpirationTime(`${ttlSeconds}s`)
     .sign(key);
