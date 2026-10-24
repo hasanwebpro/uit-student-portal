@@ -195,7 +195,28 @@ Responsive: tables become labelled record cards under 720 px; the timetable beco
 inputs are ≥ 16 px in Sunlight (no iOS zoom). Charts are hand-drawn SVG (≈ 3 KB) with a hidden data table for screen readers.
 First-load JS is **~62 KB gzipped**; every page is its own 0.2–2 KB chunk; fonts are self-hosted; a service worker caches the app shell (never `/api`).
 
-> **"HTS"** in the assignment brief — I treated it as "usability heuristics / web standards". If your sir meant something specific, tell me and I'll map it here.
+### Human–computer interaction (HCI) principles
+
+The brief's "HTS" is read as **HCI**. The table maps the classic principle sets to what the app does, and lists what it does *not* do.
+
+| Principle | Where it shows up |
+|---|---|
+| **Shneiderman 1 – consistency** | one design-token set and one component library; same table, dialog, form and toast behaviour on every page |
+| **2 – shortcuts for experts** | skip-to-content link, native keyboard operation everywhere, remembered theme/sidebar state, "remember me" |
+| **3 – informative feedback** | skeleton → content → error-with-retry, busy buttons, toasts, per-field messages, attendance shown as text + colour + meter |
+| **4 – dialogs with closure** | submit → confirmation toast + the list updates; registration and work-flow show a clear "submitted" state |
+| **5 – error prevention / simple recovery** | server-enforced registration rules, disabled actions say why, date-range checks, retry on every failed load |
+| **6 – easy reversal** | Cancel on every form, Esc closes dialogs/drawers, confirm before delete / final submit |
+| **7 – internal locus of control** | collapsible sidebar, user-chosen theme, nothing moves or submits by itself |
+| **8 – reduce short-term memory** | recipient grids and course selects instead of typing IDs, visible filters, breadcrumbs, running ledger balance |
+| **Norman – visibility, affordance, signifiers, mapping, constraints** | menu groups mirror the original portal's mental model; buttons look like buttons; input types and limits constrain entry; focus rings always visible |
+| **Fitts's law** (target size/distance) | Sunlight: ≥ 44 px targets, thumb-reach bottom bar on phones; Classic keeps the original's smaller targets |
+| **Hick's law** (choice count) | navigation grouped into 7 sections; the dashboard leads with 4 key numbers before details |
+| **Miller / chunking** | long tables paged, become labelled cards on phones, timetable becomes a day agenda |
+| **WCAG 2.2 POUR** | perceivable (contrast, text alternatives), operable (keyboard, focus order, no traps), understandable (plain-language errors, consistent navigation), robust (semantic landmarks, axe-core audit clean) |
+
+Not done, deliberately or for lack of time: no *undo* after a delete (a confirmation dialog is used instead), no custom keyboard-shortcut keys,
+no usability test with real students, and the Classic theme keeps the original's low-contrast greys (use Sunlight for accessibility).
 
 ---
 
