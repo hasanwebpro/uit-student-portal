@@ -209,7 +209,7 @@ First-load JS is **~62 KB gzipped**; every page is its own 0.2–2 KB chunk; fon
 | `npm run audit:contrast` — every text/background pair of the Sunlight theme | all pairs pass (AAA for text) |
 | `npm run audit:ui` — 27 routes (incl. the 404 page) × desktop + phone, axe-core (WCAG 2.2 A/AA + best practice), overflow, `<h1>` count, console errors | **54 / 54 clean in both themes** (Classic's inherited palette contrast is reported separately) |
 | Numeric comparison of the clone vs. the live portal (fonts, sizes, colours, radii, paddings) | shell and dashboard match; remaining differences are measurement-mapping noise |
-| **Backend against a real MySQL server** | The authoring sandbox had no MySQL; the UI audit used `tools/audit/mock-server.mjs`, a stand-in that mirrors the controllers' response shapes. **The first real proof is the `integration` job in CI** (see the Actions tab). Fix whatever it reports, then run `npm run seed` and click through every page. |
+| **Backend against a real MySQL server** | The authoring sandbox had no MySQL; the UI audit used `tools/audit/mock-server.mjs`, a stand-in that mirrors the controllers' response shapes. **The `integration` job in CI runs the API against real MySQL 8.4 — 16/16 scenarios pass**, including seeding, every read endpoint, refresh-token theft detection and lockout. What no automated check covers is a human clicking through every page against MySQL: run `npm run launch` and do that once. |
 
 `npm audit` reports 2 *moderate* findings through Sequelize 6's `uuid@8` dependency (a buffer-bounds issue that only applies when a caller passes an output buffer, which Sequelize does not). CI fails on *high* or above.
 
